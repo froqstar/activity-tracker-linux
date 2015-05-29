@@ -1,0 +1,12 @@
+[Unit]
+Description=kraken.me - activity tracker
+Documentation=https://github.com/syncthing/syncthing/wiki
+After=graphical.target
+
+[Service]
+User=$1
+ExecStart=/opt/kraken.me/kraken.me
+Restart=on-failure
+
+[Install]
+WantedBy=graphical.target

@@ -1,0 +1,14 @@
+triggers:
+- X focus change
+- session file change
+- geoevent
+- networkevent
+
+events:
+- application
+- file
+- website
+- geoposition
+- 
+
+
