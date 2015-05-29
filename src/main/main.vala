@@ -1,56 +1,67 @@
+Using Gee;
+Using Glib;
+
+namespace (Kraken) {
+
+	class KrakenDaemon : GLib.Object {
+
+		List<KrakenTrigger> triggers;
+
+		public static int main(string[] args) {
+
+			//TODO: use Glib.MainLoop
+			http://stackoverflow.com/questions/12561695/efficient-daemon-in-vala
 
 
-class FocusQuery : GLib.Object {
+			Xcb.GenericError? error;
 
-    public static int main(string[] args) {
+			Thread.usleep (200000);
 
-		Xcb.GenericError? error;
+			stdout.printf("Active window:\n");
 
-	    Thread.usleep (200000);
+		    Xcb.Connection connection = new Xcb.Connection(null, null);
 
-	    stdout.printf("Active window:\n");
+		    Xcb.GetInputFocusCookie cookie = connection.get_input_focus();
+		    Xcb.GetInputFocusReply window_focus = connection.get_input_focus_reply(cookie, out error);
 
-        Xcb.Connection connection = new Xcb.Connection(null, null);
+		    stdout.printf("Focus = %d\n", (int) window_focus.focus);
 
-        Xcb.GetInputFocusCookie cookie = connection.get_input_focus();
-        Xcb.GetInputFocusReply window_focus = connection.get_input_focus_reply(cookie, out error);
+		    Xcb.GetPropertyCookie propertyCookie = connection.get_property(
+		    											false,
+		                                              	window_focus.focus - 1, // don't know why, this is messed up...
+		                                                Xcb.Atom.WM_NAME,
+		                                                Xcb.Atom.STRING,
+		                                                0, 100);
 
-        stdout.printf("Focus = %d\n", (int) window_focus.focus);
+		    Xcb.GetPropertyReply window_name = connection.get_property_reply(propertyCookie, out error);
 
-        Xcb.GetPropertyCookie propertyCookie = connection.get_property(
-        											false,
-                                                  	window_focus.focus - 1, // don't know why, this is messed up...
-                                                    Xcb.Atom.WM_NAME,
-                                                    Xcb.Atom.STRING,
-                                                    0, 100);
+		    stdout.printf("Window Title: %s\n", window_name.value_as_string());
 
-        Xcb.GetPropertyReply window_name = connection.get_property_reply(propertyCookie, out error);
+		    Xcb.GetPropertyCookie propertyCookie2 = connection.get_property(
+		    											false,
+		                                              	window_focus.focus - 1, // don't know why, this is messed up...
+		                                                Xcb.Atom.WM_CLASS,
+		                                                Xcb.Atom.STRING,
+		                                                0, 100);
 
-        stdout.printf("Window Title: %s\n", window_name.value_as_string());
+		    Xcb.GetPropertyReply program_name = connection.get_property_reply(propertyCookie2, out error);
 
-        Xcb.GetPropertyCookie propertyCookie2 = connection.get_property(
-        											false,
-                                                  	window_focus.focus - 1, // don't know why, this is messed up...
-                                                    Xcb.Atom.WM_CLASS,
-                                                    Xcb.Atom.STRING,
-                                                    0, 100);
+		    stdout.printf("Program Name: %s\n", program_name.value_as_string());
 
-        Xcb.GetPropertyReply program_name = connection.get_property_reply(propertyCookie2, out error);
+		    /*if(error != null) {
+		    	stdout.printf("Error = %d", error.error_code);
+			}
 
-        stdout.printf("Program Name: %s\n", program_name.value_as_string());
+		    stdout.printf("Type = %d\n", (int) window_name.type);
+		    stdout.printf("Value length = %d\n", window_name.value_length());
+		    stdout.printf("Value format = %d\n", window_name.format);
 
-        /*if(error != null) {
-        	stdout.printf("Error = %d", error.error_code);
-    	}
+		    if(window_name.type == Xcb.Atom.STRING) {
+		    	stdout.printf("Window Title: %s\n", window_name.value_as_string());
+		    }*/
 
-        stdout.printf("Type = %d\n", (int) window_name.type);
-        stdout.printf("Value length = %d\n", window_name.value_length());
-        stdout.printf("Value format = %d\n", window_name.format);
+		    return 0;
+		}
+	}
 
-        if(window_name.type == Xcb.Atom.STRING) {
-        	stdout.printf("Window Title: %s\n", window_name.value_as_string());
-        }*/
-
-        return 0;
-    }
 }
