@@ -9,7 +9,9 @@ OUTPUT_FILE=kraken
 
 all:
 	valac $(VFLAGS) $(SRC_FILES) $(VAPI_FILES) -X $(CFLAGS) -o $(OUTPUT_DIR)/$(OUTPUT_FILE)
+
+run:
 	$(OUTPUT_DIR)/$(OUTPUT_FILE)
 
 clean:
-	rm -f 
+	rm -f $(OUTPUT_DIR)/$(OUTPUT_FILE)
