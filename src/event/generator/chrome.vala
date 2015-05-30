@@ -1,6 +1,6 @@
 namespace (Kraken) {
 
-	class ChromeGenerator : Glib.Object {
+	class ChromeGenerator : Glib.Object, Generator {
 	}
 
 }

@@ -1,6 +1,6 @@
 namespace (Kraken) {
 
-	class GeditGenerator : Glib.Object {
+	class GeditGenerator : Glib.Object, Generator {
 	}
 
 }

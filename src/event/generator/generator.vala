@@ -1,6 +1,8 @@
 namespace (Kraken) {
 
-	interface Generator : Glib.Object {
+	interface Generator {
+
+		public Event generate();
 	}
 
 }
