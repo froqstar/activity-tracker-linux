@@ -1,57 +1,65 @@
-namespace (Kraken) {
+Using Glib;
+Using Xcb;
 
-	public class XFocusChangeTrigger : Glib.Object {
+namespace Kraken {
 
-		private string getProcessClass() {
+	public class XFocusChangeTrigger : Glib.Object, Trigger {
 
-			Xcb.GenericError? error;
+		private Connection connection;
+		private Window focused_window;
 
-			Thread.usleep (200000);
+		public XFocusChangeTrigger() {
+			connection = new Connection(null, null);
+		}
 
-			stdout.printf("Active window:\n");
+		public override void activate() {
+			while (true) {
+				focused_window = get_focused_window();
 
-		    Xcb.Connection connection = new Xcb.Connection(null, null);
+				string window_title = get_window_title(focused_window);
+				string window_class = get_window_class(focused_window);
 
-		    Xcb.GetInputFocusCookie cookie = connection.get_input_focus();
-		    Xcb.GetInputFocusReply window_focus = connection.get_input_focus_reply(cookie, out error);
+				stdout.printf("window title: %s\nwindow class: %s\n", window_title, window_class);
 
-		    stdout.printf("Focus = %d\n", (int) window_focus.focus);
+				register_focus_change_event(focused_window);
 
-		    Xcb.GetPropertyCookie propertyCookie = connection.get_property(
-		    											false,
-		                                              	window_focus.focus - 1, // don't know why, this is messed up...
-		                                                Xcb.Atom.WM_NAME,
-		                                                Xcb.Atom.STRING,
-		                                                0, 100);
-
-		    Xcb.GetPropertyReply window_name = connection.get_property_reply(propertyCookie, out error);
-
-		    stdout.printf("Window Title: %s\n", window_name.value_as_string());
-
-		    Xcb.GetPropertyCookie propertyCookie2 = connection.get_property(
-		    											false,
-		                                              	window_focus.focus - 1, // don't know why, this is messed up...
-		                                                Xcb.Atom.WM_CLASS,
-		                                                Xcb.Atom.STRING,
-		                                                0, 100);
-
-		    Xcb.GetPropertyReply program_name = connection.get_property_reply(propertyCookie2, out error);
-
-		    stdout.printf("Program Name: %s\n", program_name.value_as_string());
-
-		    /*if(error != null) {
-		    	stdout.printf("Error = %d", error.error_code);
+				//TODO: send start event
+				GenericEvent event = connection.wait_for_event();
+				//TODO: if focus lost: send end event
 			}
+		}
 
-		    stdout.printf("Type = %d\n", (int) window_name.type);
-		    stdout.printf("Value length = %d\n", window_name.value_length());
-		    stdout.printf("Value format = %d\n", window_name.format);
 
-		    if(window_name.type == Xcb.Atom.STRING) {
-		    	stdout.printf("Window Title: %s\n", window_name.value_as_string());
-		    }*/
+		private Window get_focused_window() {
+			GetInputFocusCookie cookie = connection.get_input_focus();
+		    GetInputFocusReply window_focus = connection.get_input_focus_reply(cookie, out error);
+		    return window_focus.focus;
+		}
 
+		private string get_window_title(Window w) {
+			GetPropertyCookie propertyCookie = connection.get_property(
+		    											false,
+		                                              	w - 1, // don't know why, this is messed up...
+		                                                Atom.WM_NAME,
+		                                                Atom.STRING,
+		                                                0, 100);
+		    GetPropertyReply window_name = connection.get_property_reply(propertyCookie, out error);
+		    return window_name.value_as_string();
+		}
+
+		private string get_window_class(Window w) {
+			GetPropertyCookie propertyCookie2 = connection.get_property(
+		    											false,
+		                                              	w - 1, // don't know why, this is messed up...
+		                                                Atom.WM_CLASS,
+		                                                Atom.STRING,
+		                                                0, 100);
+		    GetPropertyReply program_name = connection.get_property_reply(propertyCookie2, out error);
 		    return program_name.value_as_string();
+		}
+
+		private void register_focus_change_event(Window w) {
+			connection.change_window_attributes (w, CW.EVENT_MASK, {EventMask.FOCUS_CHANGE});
 		}
 	}
 }

@@ -2,7 +2,7 @@ namespace (Kraken) {
 
 	interface Generator {
 
-		public Event generate();
+		public abstract Event generate();
 	}
 
 }
