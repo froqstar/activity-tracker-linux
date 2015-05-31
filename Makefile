@@ -9,7 +9,7 @@ OUTPUT_DIR=./build
 OUTPUT_FILE=kraken
 
 all:
-	valac $(VFLAGS) $(SRC_FILES) $(VAPI_FILES) -X $(CFLAGS) -o $(OUTPUT_DIR)/$(OUTPUT_FILE)
+	valac $(VFLAGS) $(PKGS) $(SRC_FILES) $(VAPI_FILES) -X $(CFLAGS) -o $(OUTPUT_DIR)/$(OUTPUT_FILE)
 
 run:
 	$(OUTPUT_DIR)/$(OUTPUT_FILE)

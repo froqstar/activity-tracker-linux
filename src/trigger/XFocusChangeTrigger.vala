@@ -24,7 +24,17 @@ namespace Kraken {
 				register_focus_change_event(focused_window);
 
 				//TODO: send start event
+				//stdout.printf("waiting for event...");
 				Xcb.GenericEvent event = connection.wait_for_event();
+				//stdout.printf("received, looking into it...\n");
+
+				//stdout.printf("event value: %d\n", event.response_type);
+
+				switch (event.response_type & ~0x80) {
+					case Xcb.EventMask.FOCUS_CHANGE:
+						stdout.printf("focus change event detected. helllllll yesssssssssssssssssss\n");
+						break;
+				}
 				//TODO: if focus lost: send end event
 			}
 		}
@@ -59,7 +69,12 @@ namespace Kraken {
 		}
 
 		private void register_focus_change_event(Xcb.Window w) {
-			connection.change_window_attributes (w, Xcb.CW.EVENT_MASK, {Xcb.EventMask.FOCUS_CHANGE});
+			// http://xcb.freedesktop.org/tutorial/events/
+			connection.flush();
+			//uint32[] event_types = {Xcb.EventMask.EXPOSURE, Xcb.EventMask.VISIBILITY_CHANGE, Xcb.EventMask.FOCUS_CHANGE};
+			uint32[] event_types = {Xcb.EventMask.FOCUS_CHANGE};
+			connection.change_window_attributes (w, Xcb.CW.EVENT_MASK, event_types);
+			connection.flush();
 		}
 	}
 }
