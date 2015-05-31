@@ -40,6 +40,8 @@ namespace Kraken {
 				}
 				//TODO: if focus lost: send end event
 				stdout.printf("FOCUS CHANGE EVENT\n");
+
+				deregister_focus_change_event(focused_window);
 			}
 		}
 
@@ -78,6 +80,13 @@ namespace Kraken {
 			connection.flush();
 			//uint32[] event_types = {Xcb.EventMask.EXPOSURE, Xcb.EventMask.VISIBILITY_CHANGE, Xcb.EventMask.FOCUS_CHANGE};
 			uint32[] event_types = {Xcb.EventMask.FOCUS_CHANGE};
+			connection.change_window_attributes (w, Xcb.CW.EVENT_MASK, event_types);
+			connection.flush();
+		}
+
+		private void deregister_focus_change_event(Xcb.Window w) {
+			connection.flush();
+			uint32[] event_types = {0};
 			connection.change_window_attributes (w, Xcb.CW.EVENT_MASK, event_types);
 			connection.flush();
 		}
