@@ -15,27 +15,31 @@ namespace Kraken {
 		public void activate() {
 			while (true) {
 				focused_window = get_focused_window();
+				stdout.printf("focused window: %d\n", (int) focused_window);
 
 				string window_title = get_window_title(focused_window);
 				string window_class = get_window_class(focused_window);
-
-				stdout.printf("window title: %s\nwindow class: %s\n", window_title, window_class);
+				stdout.printf("window title: %s\nwindow class: %s\n\n\n", window_title, window_class);
 
 				register_focus_change_event(focused_window);
 
 				//TODO: send start event
+
 				//stdout.printf("waiting for event...");
-				Xcb.GenericEvent event = connection.wait_for_event();
+				//Xcb.GenericEvent event = connection.wait_for_event();
 				//stdout.printf("received, looking into it...\n");
 
-				//stdout.printf("event value: %d\n", event.response_type);
+				//stdout.printf("event response_type: %d\n", (int)event.response_type);
 
-				switch (event.response_type & ~0x80) {
-					case Xcb.EventMask.FOCUS_CHANGE:
-						stdout.printf("focus change event detected. helllllll yesssssssssssssssssss\n");
-						break;
+				/*
+				if (event.response_type == 9 && window_class != null) {
+					stdout.printf(" = FOCUS CHANGE EVENT\n");
+				}*/
+
+				while (connection.wait_for_event().response_type != Xcb.FOCUS_OUT) {
 				}
 				//TODO: if focus lost: send end event
+				stdout.printf("FOCUS CHANGE EVENT\n");
 			}
 		}
 
@@ -54,6 +58,7 @@ namespace Kraken {
 		                                                Xcb.Atom.STRING,
 		                                                0, 100);
 		    Xcb.GetPropertyReply window_name = connection.get_property_reply(propertyCookie, out error);
+
 		    return window_name.value_as_string();
 		}
 
