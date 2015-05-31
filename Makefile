@@ -1,5 +1,5 @@
 
-SRC_FILES=$(find -iname "*.vala")
+SRC_FILES=$(shell find -iname "*.vala")
 VAPI_FILES=/usr/share/vala-0.28/vapi/xcb.vapi
 CFLAGS=-lxcb
 VFLAGS=--thread

@@ -1,12 +1,17 @@
-namespace (Kraken) {
+namespace Kraken {
 
-	class FirefoxGenerator : Glib.Object, Generator {
+	class FirefoxGenerator : Object, Generator {
 
 		private string sessionFilePath;
 
 		public FirefoxGenerator() {
 			//TODO: determine version
 			//
+		}
+
+		public Activity generate() {
+			//TODO: read session file
+			return null;
 		}
 	}
 

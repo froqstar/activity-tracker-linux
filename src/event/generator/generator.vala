@@ -1,8 +1,8 @@
-namespace (Kraken) {
+namespace Kraken {
 
-	interface Generator {
+	interface Generator : Object {
 
-		public abstract Event generate();
+		public abstract Activity generate();
 	}
 
 }
