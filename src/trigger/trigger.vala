@@ -1,7 +1,7 @@
 namespace Kraken {
 
-	interface Trigger : Glib.Object {
-		public void activate();
+	interface Trigger : Object {
+		public abstract void activate();
 	}
 
 }

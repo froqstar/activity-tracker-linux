@@ -1,11 +1,10 @@
-Using Gee;
-Using Glib;
+using Gee;
 
 namespace Kraken {
 
-	class KrakenDaemon : GLib.Object {
+	class KrakenDaemon : Object {
 
-		List<Trigger> triggers;
+		//Gee.List<Trigger> triggers;
 
 		public static int main(string[] args) {
 
