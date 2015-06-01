@@ -1,6 +1,6 @@
 namespace Kraken {
 
-	interface Generator : Object {
+	interface IGenerator : Object {
 
 		public abstract Activity generate();
 	}

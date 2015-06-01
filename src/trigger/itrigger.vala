@@ -1,6 +1,6 @@
 namespace Kraken {
 
-	interface Trigger : Object {
+	interface ITrigger : Object {
 		public abstract void activate();
 	}
 

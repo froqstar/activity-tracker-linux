@@ -1,6 +1,6 @@
 namespace Kraken {
 
-	class FirefoxGenerator : Object, Generator {
+	class FirefoxGenerator : Object, IGenerator {
 
 		private string sessionFilePath;
 

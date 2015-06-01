@@ -8,7 +8,7 @@ namespace Kraken {
 
 		public static int main(string[] args) {
 
-			Trigger xtrigger = new XFocusChangeTrigger();
+			ITrigger xtrigger = new XFocusChangeTrigger();
 			xtrigger.activate();
 
 			//TODO: setup triggers

@@ -3,6 +3,9 @@ namespace Kraken {
 
 	class Activity : Object {
 
+		private DateTime start;
+		private DateTime end;
+
 		public enum ActivityType {
 			FILE,
 			URL,
@@ -16,6 +19,9 @@ namespace Kraken {
 
 		public Activity(ActivityType type) {
 			activity_type = type;
+
+			start = new DateTime.now_local();
+			stdout.printf("start time : %s\n", start.to_string());
 		}
 
 	}

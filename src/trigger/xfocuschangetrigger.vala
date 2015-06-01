@@ -2,7 +2,7 @@ using Xcb;
 
 namespace Kraken {
 
-	class XFocusChangeTrigger : Object, Trigger {
+	class XFocusChangeTrigger : Object, ITrigger {
 
 		private Xcb.Connection connection;
 		private Xcb.GenericError? error;
