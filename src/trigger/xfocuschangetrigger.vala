@@ -8,8 +8,11 @@ namespace Kraken {
 		private Xcb.GenericError? error;
 		private Xcb.Window focused_window;
 
-		public XFocusChangeTrigger() {
+		private ITriggerHandler handler;
+
+		public XFocusChangeTrigger(ITriggerHandler handler) {
 			connection = new Xcb.Connection(null, null);
+			this.handler = handler;
 		}
 
 		public void activate() {
@@ -40,6 +43,7 @@ namespace Kraken {
 				}
 				//TODO: if focus lost: send end event
 				stdout.printf("FOCUS CHANGE EVENT\n");
+				handler.on_trigger_fired("x");
 
 				deregister_focus_change_event(focused_window);
 			}
