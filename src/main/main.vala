@@ -9,7 +9,11 @@ namespace Kraken {
 
 		private Activity current_activity;
 
-		public KrakenDaemon() {
+		private ILogger log;
+
+		public KrakenDaemon(ILogger log) {
+			this.log = log;
+
 			new FirefoxGenerator(this);
 
 			ITrigger xtrigger = new XFocusChangeTrigger(this);
@@ -22,7 +26,8 @@ namespace Kraken {
 			if (generators.has_key(identifier)) {
 				generators.get(identifier).generate();
 			} else {
-				stdout.printf("no generator registered for identifier '%s', creating default event.\n", identifier);
+				stdout.printf("no generator registered for '%s', creating default activity.\n", identifier);
+				on_activity_started(new Activity(identifier, Activity.ActivityType.APPLICATION));
 			}
 			generators.get(identifier).generate();
 		}
@@ -41,6 +46,7 @@ namespace Kraken {
 		public void on_activity_started(Activity activity) {
 			stdout.printf("started new activity.");
 			current_activity = activity;
+			log.log(activity.application);
 		}
 
 		public void on_activity_finished(Activity activity) {
@@ -48,11 +54,7 @@ namespace Kraken {
 
 		public static int main(string[] args) {
 
-			KrakenDaemon daemon = new KrakenDaemon();
-
-			//TODO: setup triggers
-			//TODO: setup generators
-			//TODO: setup logger
+			KrakenDaemon daemon = new KrakenDaemon(new FileLogger("log/krakenlog.log"));
 
 			//TODO: use Glib.timeout or sync?
 			//http://stackoverflow.com/questions/12561695/efficient-daemon-in-vala

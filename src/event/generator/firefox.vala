@@ -17,7 +17,7 @@ namespace Kraken {
 
 		public void generate() {
 			//TODO: read session file
-			handler.on_activity_started(new Activity(Activity.ActivityType.URL));
+			handler.on_activity_started(new Activity("firefox", Activity.ActivityType.URL));
 		}
 	}
 

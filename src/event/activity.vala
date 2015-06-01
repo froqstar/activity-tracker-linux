@@ -7,6 +7,7 @@ namespace Kraken {
 		private DateTime end;
 
 		public enum ActivityType {
+			APPLICATION,
 			FILE,
 			URL,
 			NETWORK,
@@ -14,13 +15,15 @@ namespace Kraken {
 		}
 
 		public ActivityType activity_type {get; private set;}
+		public string application {get; private set;}
 		public string path {get; set;}
 		public string url {get; set;}
 
-		public Activity(ActivityType type) {
+		public Activity(string application, ActivityType type) {
+			this.application = application;
 			activity_type = type;
 
-			start = new DateTime.now_local();
+			start = new DateTime.now_utc();
 			stdout.printf("start time : %s\n", start.to_string());
 		}
 
