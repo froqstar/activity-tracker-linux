@@ -2,7 +2,7 @@ using Gee;
 
 namespace Kraken {
 
-	class KrakenDaemon : Object, IActivityHandler, ITriggerHandler, IGeneratorHandler {
+	class KrakenDaemon : Object, ITriggerHandler, IGeneratorHandler {
 
 		private HashMap<string, ITrigger> triggers = new HashMap<string, ITrigger>();
 		private HashMap<string, IGenerator> generators = new HashMap<string, IGenerator>();
@@ -10,6 +10,8 @@ namespace Kraken {
 		private Activity current_activity;
 
 		public KrakenDaemon() {
+			new FirefoxGenerator(this);
+
 			ITrigger xtrigger = new XFocusChangeTrigger(this);
 			triggers.set("x", xtrigger);
 			xtrigger.activate();
@@ -17,6 +19,11 @@ namespace Kraken {
 
 		public void on_trigger_fired(string identifier) {
 			stdout.printf("trigger '%s' fired.\n", identifier);
+			if (generators.has_key(identifier)) {
+				generators.get(identifier).generate();
+			} else {
+				stdout.printf("no generator registered for identifier '%s', creating default event.\n", identifier);
+			}
 			generators.get(identifier).generate();
 		}
 
@@ -32,6 +39,8 @@ namespace Kraken {
 		}
 
 		public void on_activity_started(Activity activity) {
+			stdout.printf("started new activity.");
+			current_activity = activity;
 		}
 
 		public void on_activity_finished(Activity activity) {
