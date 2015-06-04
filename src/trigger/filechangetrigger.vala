@@ -17,7 +17,7 @@ namespace Kraken {
 
 			File file = File.new_for_path (path);
 			monitor = file.monitor (FileMonitorFlags.NONE, null);
-			stdout.printf ("Monitoring: %s\n", file.get_path ());
+			stdout.printf("Monitoring: %s\n", file.get_path ());
 
 			if (!file.query_exists ()) {
 		    	stdout.printf("file or directory '%s' does not exist, aborting...\n", path);
@@ -25,20 +25,10 @@ namespace Kraken {
 			}
 
 			monitor.changed.connect(on_change);
-
-
-			monitor.changed.connect ((src, dest, event) => {
-				if (dest != null) {
-					stdout.printf ("%s: %s, %s\n", event.to_string (), src.get_path (), dest.get_path ());
-				} else {
-					stdout.printf ("%s: %s\n", event.to_string (), src.get_path ());
-				}
-			});
-
 		}
 
 		public void on_change(File file, File? other_file, FileMonitorEvent event_type) {
-			stdout.printf("file %s changed.\n", path);
+			stdout.printf("file %s changed.\n", file.get_path());
 			handler.on_trigger_fired(path);
 		}
 	}

@@ -10,12 +10,18 @@ namespace Kraken {
 
 		private ITriggerHandler handler;
 
+		private unowned Thread<void*> looperthread;
+
 		public XFocusChangeTrigger(ITriggerHandler handler) {
 			connection = new Xcb.Connection(null, null);
 			this.handler = handler;
 		}
 
 		public void activate() {
+			looperthread = Thread.create<void*> (loop, true);
+		}
+
+		public void* loop() {
 			while (true) {
 				focused_window = get_focused_window();
 				stdout.printf("focused window: %d\n", (int) focused_window);
