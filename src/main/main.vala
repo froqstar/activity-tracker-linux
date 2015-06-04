@@ -7,7 +7,9 @@ namespace Kraken {
 		private HashMap<string, ITrigger> triggers = new HashMap<string, ITrigger>();
 		private HashMap<string, IGenerator> generators = new HashMap<string, IGenerator>();
 
-		private Activity current_activity;
+		private Activity current_application;
+		private Activity current_url;
+		private Activity current_file;
 
 		private ILogger log;
 
@@ -46,12 +48,47 @@ namespace Kraken {
 		}
 
 		public void on_activity_started(Activity activity) {
-			stdout.printf("started new activity '%s'.\n", activity.application);
-			current_activity = activity;
-			log.log(activity.application);
+			switch (activity.activity_type) {
+				case Activity.ActivityType.APPLICATION:
+					if (current_application.data != activity.data) { // new activity
+						on_activity_finished(current_url);
+						on_activity_finished(current_file);
+						on_activity_finished(current_application);
+						current_application = activity;
+						log.log("OPENED APPLICATION: " + activity.data);
+					}
+					break;
+				case Activity.ActivityType.URL:
+					if (current_url.data != activity.data) {
+						on_activity_finished(current_url);
+						current_url = activity;
+						log.log("OPENED URL: " + activity.data);
+					}
+					break;
+				default:
+					break;
+			}
 		}
 
 		public void on_activity_finished(Activity activity) {
+			if (activity != null) {
+				switch (activity.activity_type) {
+					case Activity.ActivityType.APPLICATION:
+						log.log("CLOSED APPLICATION: " + activity.data);
+						current_application = null;
+						break;
+					case Activity.ActivityType.URL:
+						log.log("CLOSED URL: " + activity.data);
+						current_url = null;
+						break;
+					case Activity.ActivityType.FILE:
+						log.log("CLOSED FILE: " + activity.data);
+						current_file = null;
+						break;
+					default:
+						break;
+				}
+			}
 		}
 
 		public static int main(string[] args) {
