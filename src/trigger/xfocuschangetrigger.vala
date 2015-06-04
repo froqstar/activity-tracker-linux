@@ -22,7 +22,7 @@ namespace Kraken {
 
 				string window_title = get_window_title(focused_window);
 				string window_class = get_window_class(focused_window);
-				stdout.printf("window title: %s\nwindow class: %s\n\n\n", window_title, window_class);
+				//stdout.printf("window title: %s\nwindow class: %s\n\n\n", window_title, window_class);
 
 				handler.on_trigger_fired(window_class);
 
@@ -30,7 +30,7 @@ namespace Kraken {
 
 				while (connection.wait_for_event().response_type != Xcb.FOCUS_OUT) {
 				}
-				stdout.printf("FOCUS CHANGE EVENT\n");
+				//stdout.printf("FOCUS CHANGE EVENT\n");
 
 				deregister_focus_change_event(focused_window);
 			}

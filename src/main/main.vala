@@ -29,13 +29,15 @@ namespace Kraken {
 				stdout.printf("no generator registered for '%s', creating default activity.\n", identifier);
 				on_activity_started(new Activity(identifier, Activity.ActivityType.APPLICATION));
 			}
-			generators.get(identifier).generate();
 		}
 
 		public void register_generator_for_file(IGenerator generator, string path) {
 			generators.set(path, generator);
 			if (!triggers.has_key(path)) {
 				stdout.printf("need to create file trigger for %s\n", path);
+				FileChangeTrigger trigger = new FileChangeTrigger(path, this);
+				triggers.set(path, trigger);
+				trigger.activate();
 			}
 		}
 
@@ -44,7 +46,7 @@ namespace Kraken {
 		}
 
 		public void on_activity_started(Activity activity) {
-			stdout.printf("started new activity.");
+			stdout.printf("started new activity '%s'.\n", activity.application);
 			current_activity = activity;
 			log.log(activity.application);
 		}

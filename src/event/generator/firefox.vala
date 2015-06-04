@@ -10,9 +10,9 @@ namespace Kraken {
 			//TODO: determine version
 			//
 			this.handler = handler;
-			handler.register_generator_for_window_class(this, "firefox");
+			handler.register_generator_for_window_class(this, "Navigator");
 			//TODO: determine file for current session/user
-			handler.register_generator_for_file(this, "/home/martin/.mozilla/firefox/pap607rg.default/sessionstore-backups/previous.js");
+			handler.register_generator_for_file(this, "/home/martin/.mozilla/firefox/pap607rg.default/sessionstore-backups/recovery.js");
 		}
 
 		public void generate() {
