@@ -3,7 +3,7 @@ SRC_FILES=$(shell find -iname "*.vala")
 VAPI_FILES=/usr/share/vala-0.28/vapi/xcb.vapi
 CFLAGS=-lxcb
 VFLAGS=--thread
-PKGS=--pkg gee-0.8 --pkg gio-2.0
+PKGS=--pkg gee-0.8 --pkg gio-2.0 --pkg json-glib-1.0
 
 OUTPUT_DIR=./build
 OUTPUT_FILE=kraken.bin

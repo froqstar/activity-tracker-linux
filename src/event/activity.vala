@@ -10,7 +10,7 @@ namespace Kraken {
 			APPLICATION,
 			FILE,
 			URL,
-			NETWORK,
+			WIFI_NETWORK,
 			GEOPOSITION
 		}
 

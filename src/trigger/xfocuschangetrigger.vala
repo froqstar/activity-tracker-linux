@@ -24,7 +24,7 @@ namespace Kraken {
 		public void* loop() {
 			while (true) {
 				focused_window = get_focused_window();
-				stdout.printf("focused window: %d\n", (int) focused_window);
+				//stdout.printf("focused window: %d\n", (int) focused_window);
 
 				//string window_title = get_window_title(focused_window);
 				string window_class = get_window_class(focused_window);
