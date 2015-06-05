@@ -74,11 +74,11 @@ namespace Kraken {
 			if (activity != null) {
 				switch (activity.activity_type) {
 					case Activity.ActivityType.APPLICATION:
-						log.log("CLOSED APPLICATION: " + activity.data);
+						log.log("LEFT APPLICATION: " + activity.data);
 						current_application = null;
 						break;
 					case Activity.ActivityType.URL:
-						log.log("CLOSED URL: " + activity.data);
+						log.log("LEFT URL: " + activity.data);
 						current_url = null;
 						break;
 					case Activity.ActivityType.FILE:

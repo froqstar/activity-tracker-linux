@@ -2,22 +2,56 @@ namespace Kraken {
 
 	class FirefoxGenerator : Object, IGenerator {
 
-		private string session_file_path = "/home/martin/.mozilla/firefox/pap607rg.default/sessionstore-backups/recovery.js";
+		private string session_file_path = "./";
 
 		private IGeneratorHandler handler;
 
 		public FirefoxGenerator(IGeneratorHandler handler) {
-			//TODO: determine version
-			//
 			this.handler = handler;
+			session_file_path = get_session_file_path();
+
 			handler.register_generator_for_window_class(this, "Navigator");
-			//TODO: determine session file path for current session/user
 			handler.register_generator_for_file(this, session_file_path);
 		}
 
 		public void generate() {
 			handler.on_activity_started(new Activity("firefox", Activity.ActivityType.APPLICATION));
 			handler.on_activity_started(new Activity(extract_current_url(), Activity.ActivityType.URL));
+		}
+
+		private string get_session_file_path() {
+			string home = Environment.get_home_dir();
+			string firefox_folder = home + "/.mozilla/firefox/";
+			string profile_folder = "";
+			string file_path = "";
+
+			try {
+				Dir dir = Dir.open (firefox_folder, 0);
+				string? name = null;
+
+				while ((name = dir.read_name ()) != null) {
+					//TODO: check if pattern holds for all versions, even <34?
+					if (name.contains(".default")) {
+						//default profile, run with it...
+						profile_folder = firefox_folder + name + "/";
+						break;
+					}
+				}
+			} catch (FileError err) {
+				stderr.printf (err.message);
+				return "";
+			}
+			if (profile_folder.char_count() == 0) {
+				return "";
+			}
+
+			//check for possible session file locations
+			if (FileUtils.test (profile_folder + "sessionstore.js", FileTest.EXISTS)) {
+				file_path = profile_folder + "sessionstore.js";
+			} else if (FileUtils.test (profile_folder + "sessionstore-backups/recovery.js", FileTest.EXISTS)) {
+				file_path = profile_folder + "sessionstore-backups/recovery.js";
+			}
+			return file_path;
 		}
 
 		private string extract_current_url() {
