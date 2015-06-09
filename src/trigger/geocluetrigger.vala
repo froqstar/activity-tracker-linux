@@ -33,6 +33,9 @@ namespace Kraken {
 
 	class GeoClueTrigger : Object, ITrigger {
 
+		// the distance in meters to fire an event
+		private static int distance_threshold = 50;
+
 		private ITriggerHandler handler;
 
 		private DBus.Connection dbus_connection;
@@ -58,9 +61,13 @@ namespace Kraken {
         			"org.freedesktop.GeoClue2",
                   	manager.get_client());
 
-				client.desktop_id = "Maps";
+				client.desktop_id = "kraken.me";
+				client.distance_threshold = distance_threshold;
+
                 client.location_updated.connect(on_location_updated);
                 client.start();
+
+                extract_location(client.location);
             } catch (IOError e) {
 				stderr.printf ("%s\n", e.message);
 			}
@@ -76,6 +83,7 @@ namespace Kraken {
 		}
 
 		public void on_location_updated(string old_location_path, string new_location_path) {
+			stdout.printf("location updated.\n");
 			extract_location(new_location_path);
 		}
 	}

@@ -1,0 +1,2 @@
+- add ourselves to /etc/geoclue/geoclue.conf, or geoclue dbus won't work (kraken.me as agent?)
+
