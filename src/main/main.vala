@@ -28,7 +28,8 @@ namespace Kraken {
 			geocluetrigger.activate();
 		}
 
-		public void on_trigger_fired(string identifier) {
+		public void on_trigger_fired(string? identifier) {
+			if (identifier == null) return;
 			stdout.printf("trigger '%s' fired.\n", identifier);
 			if (generators.has_key(identifier)) {
 				generators.get(identifier).generate();
@@ -80,7 +81,7 @@ namespace Kraken {
 			}
 		}
 
-		public void on_activity_finished(Activity activity) {
+		public void on_activity_finished(Activity? activity) {
 			if (activity != null) {
 				switch (activity.activity_type) {
 					case Activity.ActivityType.APPLICATION:

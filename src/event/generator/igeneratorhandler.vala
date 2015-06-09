@@ -8,7 +8,7 @@ namespace Kraken {
 
 		public abstract void on_activity_started(Activity activity);
 
-		public abstract void on_activity_finished(Activity activity);
+		public abstract void on_activity_finished(Activity? activity);
 	}
 
 }
