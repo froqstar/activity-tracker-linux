@@ -7,12 +7,12 @@ namespace Kraken {
 		public abstract double latitude {owned get;}
 		public abstract double longitude {owned get;}
 		public abstract double accuracy {owned get;}
-		public abstract string description {owned get;}
+		public abstract ObjectPath description {owned get;}
 	}
 
 	[DBus (name = "org.freedesktop.GeoClue2.Client")]
 	interface GeoClueClient : Object {
-		public abstract string location {owned get;}
+		public abstract ObjectPath location {owned get;}
 		public abstract uint32 distance_threshold {owned get; owned set;}
 		public abstract string desktop_id {owned get; owned set;}
 		public abstract uint32 requested_accuracy_level {owned get; owned set;}
@@ -25,7 +25,7 @@ namespace Kraken {
 
 	[DBus (name = "org.freedesktop.GeoClue2.Manager")]
 	interface GeoClueManager : Object {
-		public abstract string get_client() throws IOError;
+		public abstract ObjectPath get_client() throws IOError;
 		public abstract void add_agent(string id) throws IOError;
 	}
 
@@ -53,8 +53,6 @@ namespace Kraken {
         			BusType.SYSTEM,
         			"org.freedesktop.GeoClue2",
                   	"/org/freedesktop/GeoClue2/Manager");
-
-                stdout.printf("client path %s\n", manager.get_client());
 
                 client = Bus.get_proxy_sync(
         			BusType.SYSTEM,
