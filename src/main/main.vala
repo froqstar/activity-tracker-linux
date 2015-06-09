@@ -21,6 +21,10 @@ namespace Kraken {
 			ITrigger xtrigger = new XFocusChangeTrigger(this);
 			triggers.set("x", xtrigger);
 			xtrigger.activate();
+
+			ITrigger geocluetrigger = new GeoClueTrigger(this);
+			triggers.set("geoclue", geocluetrigger);
+			geocluetrigger.activate();
 		}
 
 		public void on_trigger_fired(string identifier) {

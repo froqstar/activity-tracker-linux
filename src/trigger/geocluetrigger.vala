@@ -3,15 +3,20 @@
 namespace Kraken {
 
 	[DBus (name = "org.freedesktop.GeoClue2.Location")]
-	class GeoClueLocation : Object {
-		public double latitude{get; set;}
-		public double longitude{get; set;}
-		public double accuracy{get; set;}
-		public string description{get; set;}
+	interface GeoClueLocation : Object {
+		public abstract double latitude {owned get;}
+		public abstract double longitude {owned get;}
+		public abstract double accuracy {owned get;}
+		public abstract string description {owned get;}
 	}
 
 	[DBus (name = "org.freedesktop.GeoClue2.Client")]
 	interface GeoClueClient : Object {
+		public abstract string location {owned get;}
+		public abstract uint32 distance_threshold {owned get; owned set;}
+		public abstract string desktop_id {owned get; owned set;}
+		public abstract uint32 requested_accuracy_level {owned get; owned set;}
+
 		public abstract void start() throws IOError;
 		public abstract void stop() throws IOError;
 
@@ -46,12 +51,14 @@ namespace Kraken {
         			"org.freedesktop.GeoClue2",
                   	"/org/freedesktop/GeoClue2/Manager");
 
+                stdout.printf("client path %s\n", manager.get_client());
+
                 client = Bus.get_proxy_sync(
         			BusType.SYSTEM,
         			"org.freedesktop.GeoClue2",
                   	manager.get_client());
 
-                manager.get_client();
+				client.desktop_id = "Maps";
                 client.location_updated.connect(on_location_updated);
                 client.start();
             } catch (IOError e) {
@@ -60,13 +67,12 @@ namespace Kraken {
 		}
 
 		private void extract_location(string path) {
-		/*
 			GeoClueLocation location = Bus.get_proxy_sync(
         			BusType.SYSTEM,
         			"org.freedesktop.GeoClue2",
                   	path);
-                  	*/
-          	//stdout.printf("new location: %d|%d\n", location.latitude, location.longitude);
+
+          	stdout.printf("new location: %f|%f\n", location.latitude, location.longitude);
 		}
 
 		public void on_location_updated(string old_location_path, string new_location_path) {
