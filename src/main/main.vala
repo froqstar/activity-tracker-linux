@@ -10,6 +10,7 @@ namespace Kraken {
 		private Activity current_application;
 		private Activity current_url;
 		private Activity current_file;
+		private Activity current_position;
 
 		private ILogger log;
 
@@ -22,7 +23,7 @@ namespace Kraken {
 			triggers.set("x", xtrigger);
 			xtrigger.activate();
 
-			ITrigger geocluetrigger = new GeoClueTrigger(this);
+			ITrigger geocluetrigger = new GeoClueTrigger(this, this);
 			triggers.set("geoclue", geocluetrigger);
 			geocluetrigger.activate();
 		}
@@ -69,6 +70,11 @@ namespace Kraken {
 						log.log("OPENED URL: " + activity.data);
 					}
 					break;
+				case Activity.ActivityType.GEOPOSITION:
+					on_activity_finished(current_position);
+					current_position = activity;
+					log.log("MOVED TO: " + activity.data);
+					break;
 				default:
 					break;
 			}
@@ -88,6 +94,10 @@ namespace Kraken {
 					case Activity.ActivityType.FILE:
 						log.log("CLOSED FILE: " + activity.data);
 						current_file = null;
+						break;
+					case Activity.ActivityType.GEOPOSITION:
+						log.log("MOVED FROM: " + activity.data);
+						current_position = null;
 						break;
 					default:
 						break;

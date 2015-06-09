@@ -7,7 +7,7 @@ namespace Kraken {
 		public abstract double latitude {owned get;}
 		public abstract double longitude {owned get;}
 		public abstract double accuracy {owned get;}
-		public abstract ObjectPath description {owned get;}
+		public abstract string description {owned get;}
 	}
 
 	[DBus (name = "org.freedesktop.GeoClue2.Client")]
@@ -20,7 +20,7 @@ namespace Kraken {
 		public abstract void start() throws IOError;
 		public abstract void stop() throws IOError;
 
-		public signal void location_updated(string old_location_path, string new_location_path);
+		public signal void location_updated(ObjectPath old_location_path, ObjectPath new_location_path);
 	}
 
 	[DBus (name = "org.freedesktop.GeoClue2.Manager")]
@@ -31,20 +31,22 @@ namespace Kraken {
 
 
 
-	class GeoClueTrigger : Object, ITrigger {
+	class GeoClueTrigger : Object, ITrigger, IGenerator {
 
 		// the distance in meters to fire an event
 		private static int distance_threshold = 50;
 
-		private ITriggerHandler handler;
+		private ITriggerHandler trigger_handler;
+		private IGeneratorHandler generator_handler;
 
 		private DBus.Connection dbus_connection;
 
 		private GeoClueManager manager;
 		private GeoClueClient client;
 
-		public GeoClueTrigger(ITriggerHandler handler) {
-			this.handler = handler;
+		public GeoClueTrigger(ITriggerHandler handler, IGeneratorHandler generator_handler) {
+			this.trigger_handler = handler;
+			this.generator_handler = generator_handler;
 		}
 
 		public void activate() {
@@ -64,11 +66,13 @@ namespace Kraken {
 
                 client.location_updated.connect(on_location_updated);
                 client.start();
-
-                extract_location(client.location);
             } catch (IOError e) {
 				stderr.printf ("%s\n", e.message);
 			}
+		}
+
+		public void generate() {
+
 		}
 
 		private void extract_location(string path) {
@@ -78,9 +82,11 @@ namespace Kraken {
                   	path);
 
           	stdout.printf("new location: %f|%f\n", location.latitude, location.longitude);
+
+          	generator_handler.on_activity_started(new Activity("%f|%f".printf(location.latitude, location.longitude), Activity.ActivityType.GEOPOSITION));
 		}
 
-		public void on_location_updated(string old_location_path, string new_location_path) {
+		public void on_location_updated(ObjectPath old_location_path, ObjectPath new_location_path) {
 			stdout.printf("location updated.\n");
 			extract_location(new_location_path);
 		}
