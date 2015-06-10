@@ -15,22 +15,31 @@ namespace Kraken {
 		private ITriggerHandler handler;
 
 		private unowned Thread<void*> looperthread;
+		private bool enabled = false;
 
 		public XFocusChangeTrigger(ITriggerHandler handler) {
 			connection = new Xcb.Connection(null, null);
 			this.handler = handler;
 		}
 
+		~XFocusChangeTrigger() {
+			enabled = false;
+		}
+
 		public void activate() {
+			enabled = true;
 			try {
+				// we need to process events in a separate thread because waiting
+				// for them is a blocking operation
 				looperthread = Thread.create<void*> (loop, true);
 			} catch (ThreadError e) {
 				stderr.printf (e.message);
+				enabled = false;
 			}
 		}
 
 		public void* loop() {
-			while (true) {
+			while (enabled) {
 				focused_window = get_focused_window();
 				//stdout.printf("focused window: %d\n", (int) focused_window);
 
@@ -46,10 +55,11 @@ namespace Kraken {
 				while ((response_type = connection.wait_for_event().response_type) != Xcb.FOCUS_OUT) {
 					stdout.printf("X event type %d\n", response_type);
 				}
-				stdout.printf("FOCUS CHANGE EVENT\n");
+				//stdout.printf("FOCUS CHANGE EVENT\n");
 
 				deregister_focus_change_event(focused_window);
 			}
+			return null;
 		}
 
 
@@ -88,10 +98,9 @@ namespace Kraken {
 		private void register_focus_change_event(Xcb.Window w) {
 			// http://xcb.freedesktop.org/tutorial/events/
 			connection.flush();
-			//uint32[] event_types = {Xcb.EventMask.EXPOSURE, Xcb.EventMask.VISIBILITY_CHANGE, Xcb.EventMask.FOCUS_CHANGE};
 			uint32[] event_types = {Xcb.EventMask.FOCUS_CHANGE};
 			connection.change_window_attributes (w, Xcb.CW.EVENT_MASK, event_types);
-			connection.flush();
+			connection.flush(); //make sure our request gets processed before doing anything else
 		}
 
 		private void deregister_focus_change_event(Xcb.Window w) {

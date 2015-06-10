@@ -80,6 +80,7 @@ namespace Kraken {
                 client.start(); //start receiving updates
             } catch (IOError e) {
 				stderr.printf ("%s\n", e.message);
+				stdout.printf("GeoClue not available, location updates won't work.\n");
 			}
 		}
 
