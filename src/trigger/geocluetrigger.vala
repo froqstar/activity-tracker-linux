@@ -88,24 +88,20 @@ namespace Kraken {
 
 		}
 
-		private void extract_location(string path) {
+		public void on_location_updated(ObjectPath old_location_path, ObjectPath new_location_path) {
 			try {
 				GeoClueLocation location = Bus.get_proxy_sync(
 		    			BusType.SYSTEM,
 		    			GEOCLUE_DBUS_ADDRESS,
-		              	path);
+		              	new_location_path);
 
 		      	stdout.printf("new location: %f|%f\n", location.latitude, location.longitude);
 
-		      	generator_handler.on_activity_started(new Activity("%f|%f".printf(location.latitude, location.longitude), Activity.ActivityType.GEOPOSITION));
+				Activity activity = new Activity("%f|%f".printf(location.latitude, location.longitude), Activity.ActivityType.GEOPOSITION);
+		      	generator_handler.on_activity_started(activity);
 			} catch (IOError e) {
 				stderr.printf ("%s\n", e.message);
 			}
-		}
-
-		public void on_location_updated(ObjectPath old_location_path, ObjectPath new_location_path) {
-			stdout.printf("location updated.\n");
-			extract_location(new_location_path);
 		}
 	}
 }

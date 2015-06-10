@@ -30,7 +30,7 @@ namespace Kraken {
 
 		public void on_trigger_fired(string? identifier) {
 			if (identifier == null) return;
-			stdout.printf("trigger '%s' fired.\n", identifier);
+			stdout.printf("\ntrigger '%s' fired.\n", identifier);
 			if (generators.has_key(identifier)) {
 				generators.get(identifier).generate();
 			} else {
@@ -56,30 +56,32 @@ namespace Kraken {
 		}
 
 		public void on_activity_started(Activity activity) {
-			switch (activity.activity_type) {
-				case Activity.ActivityType.APPLICATION:
-					if (current_application.data != activity.data) { // new activity
-						on_activity_finished(current_url);
-						on_activity_finished(current_file);
-						on_activity_finished(current_application);
-						current_application = activity;
-						log.log("OPENED APPLICATION: " + activity.data);
-					}
-					break;
-				case Activity.ActivityType.URL:
-					if (current_url.data != activity.data) {
-						on_activity_finished(current_url);
-						current_url = activity;
-						log.log("OPENED URL: " + activity.data);
-					}
-					break;
-				case Activity.ActivityType.GEOPOSITION:
-					on_activity_finished(current_position);
-					current_position = activity;
-					log.log("MOVED TO: " + activity.data);
-					break;
-				default:
-					break;
+			if (activity != null) {
+				switch (activity.activity_type) {
+					case Activity.ActivityType.APPLICATION:
+						if (current_application.data != activity.data) { // new activity
+							on_activity_finished(current_url);
+							on_activity_finished(current_file);
+							on_activity_finished(current_application);
+							current_application = activity;
+							log.log("OPENED APPLICATION: " + activity.data);
+						}
+						break;
+					case Activity.ActivityType.URL:
+						if (current_url.data != activity.data) {
+							on_activity_finished(current_url);
+							current_url = activity;
+							log.log("OPENED URL: " + activity.data);
+						}
+						break;
+					case Activity.ActivityType.GEOPOSITION:
+						on_activity_finished(current_position);
+						current_position = activity;
+						log.log("MOVED TO: " + activity.data);
+						break;
+					default:
+						break;
+				}
 			}
 		}
 
