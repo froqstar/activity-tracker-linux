@@ -42,10 +42,12 @@ namespace Kraken {
 		public void register_generator_for_file(IGenerator generator, string path) {
 			generators.set(path, generator);
 			if (!triggers.has_key(path)) {
-				stdout.printf("need to create file trigger for %s\n", path);
+				stdout.printf("need to create new file trigger for path '%s'.\n", path);
 				FileChangeTrigger trigger = new FileChangeTrigger(path, this);
 				triggers.set(path, trigger);
 				trigger.activate();
+			} else {
+				stdout.printf("file trigger for path '%s' already exists.\n", path);
 			}
 		}
 

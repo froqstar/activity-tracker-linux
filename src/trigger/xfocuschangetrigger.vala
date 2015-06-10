@@ -2,6 +2,10 @@ using Xcb;
 
 namespace Kraken {
 
+	/*
+	This class leverages the X window system to extract currently focused windows
+	and get notified on focus changes.
+	*/
 	class XFocusChangeTrigger : Object, ITrigger {
 
 		private Xcb.Connection connection;
@@ -18,7 +22,11 @@ namespace Kraken {
 		}
 
 		public void activate() {
-			looperthread = Thread.create<void*> (loop, true);
+			try {
+				looperthread = Thread.create<void*> (loop, true);
+			} catch (ThreadError e) {
+				stderr.printf (e.message);
+			}
 		}
 
 		public void* loop() {
@@ -51,6 +59,7 @@ namespace Kraken {
 		    return window_focus.focus;
 		}
 
+		// get the title of the window
 		private string get_window_title(Xcb.Window w) {
 			Xcb.GetPropertyCookie propertyCookie = connection.get_property(
 		    											false,
@@ -63,6 +72,7 @@ namespace Kraken {
 		    return window_name.value_as_string();
 		}
 
+		// get the class (~process-name) of the window
 		private string get_window_class(Xcb.Window w) {
 			Xcb.GetPropertyCookie propertyCookie2 = connection.get_property(
 		    											false,
@@ -74,6 +84,7 @@ namespace Kraken {
 		    return program_name.value_as_string();
 		}
 
+		// register at the X-server for FOCUS_CHANGE events
 		private void register_focus_change_event(Xcb.Window w) {
 			// http://xcb.freedesktop.org/tutorial/events/
 			connection.flush();

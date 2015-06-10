@@ -26,20 +26,26 @@ namespace Kraken {
 	[DBus (name = "org.freedesktop.GeoClue2.Manager")]
 	interface GeoClueManager : Object {
 		public abstract ObjectPath get_client() throws IOError;
-		public abstract void add_agent(string id) throws IOError;
+		//public abstract void add_agent(string id) throws IOError;
 	}
 
 
-
+	/*
+	This Trigger uses the freedesktop.org GeoClue2 service to determine the
+	current location of the machine and get notified of location changes
+	exceeding a certain threshold.
+	*/
 	class GeoClueTrigger : Object, ITrigger, IGenerator {
 
+		// the dbus address of the GeoClue2 service
+		private static string GEOCLUE_DBUS_ADDRESS = "org.freedesktop.GeoClue2";
+		//this value is used to authenticate the app to obtain permission to use the GeoClue2 service
+		private static string DESKTOP_ID = "kraken.me";
 		// the distance in meters to fire an event
-		private static int distance_threshold = 50;
+		private static int DISTANCE_THRESHOLD = 50;
 
 		private ITriggerHandler trigger_handler;
 		private IGeneratorHandler generator_handler;
-
-		private DBus.Connection dbus_connection;
 
 		private GeoClueManager manager;
 		private GeoClueClient client;
@@ -49,23 +55,29 @@ namespace Kraken {
 			this.generator_handler = generator_handler;
 		}
 
+		~GeoClueTrigger() {
+			if (client != null) {
+				client.stop();
+			}
+		}
+
 		public void activate() {
     		try {
         		manager = Bus.get_proxy_sync(
         			BusType.SYSTEM,
-        			"org.freedesktop.GeoClue2",
+        			GEOCLUE_DBUS_ADDRESS,
                   	"/org/freedesktop/GeoClue2/Manager");
 
                 client = Bus.get_proxy_sync(
         			BusType.SYSTEM,
-        			"org.freedesktop.GeoClue2",
+        			GEOCLUE_DBUS_ADDRESS,
                   	manager.get_client());
 
-				client.desktop_id = "kraken.me";
-				client.distance_threshold = distance_threshold;
+				client.desktop_id = DESKTOP_ID;
+				client.distance_threshold = DISTANCE_THRESHOLD;
 
                 client.location_updated.connect(on_location_updated);
-                client.start();
+                client.start(); //start receiving updates
             } catch (IOError e) {
 				stderr.printf ("%s\n", e.message);
 			}
@@ -76,14 +88,18 @@ namespace Kraken {
 		}
 
 		private void extract_location(string path) {
-			GeoClueLocation location = Bus.get_proxy_sync(
-        			BusType.SYSTEM,
-        			"org.freedesktop.GeoClue2",
-                  	path);
+			try {
+				GeoClueLocation location = Bus.get_proxy_sync(
+		    			BusType.SYSTEM,
+		    			GEOCLUE_DBUS_ADDRESS,
+		              	path);
 
-          	stdout.printf("new location: %f|%f\n", location.latitude, location.longitude);
+		      	stdout.printf("new location: %f|%f\n", location.latitude, location.longitude);
 
-          	generator_handler.on_activity_started(new Activity("%f|%f".printf(location.latitude, location.longitude), Activity.ActivityType.GEOPOSITION));
+		      	generator_handler.on_activity_started(new Activity("%f|%f".printf(location.latitude, location.longitude), Activity.ActivityType.GEOPOSITION));
+			} catch (IOError e) {
+				stderr.printf ("%s\n", e.message);
+			}
 		}
 
 		public void on_location_updated(ObjectPath old_location_path, ObjectPath new_location_path) {

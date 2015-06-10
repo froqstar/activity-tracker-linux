@@ -14,17 +14,23 @@ namespace Kraken {
 		}
 
 		public void activate() {
+			stdout.printf("creating monitor for file/directory '%s'.\n", path);
 
 			File file = File.new_for_path (path);
-			monitor = file.monitor (FileMonitorFlags.NONE, null);
-			stdout.printf("monitoring file/directory '%s' for changes.\n", file.get_path ());
 
 			if (!file.query_exists ()) {
 		    	stdout.printf("file or directory '%s' does not exist, aborting...\n", path);
 		    	return;
 			}
 
-			monitor.changed.connect(on_change);
+			try {
+				monitor = file.monitor (FileMonitorFlags.NONE, null);
+				monitor.changed.connect(on_change);
+				stdout.printf("success.\n");
+			} catch (Error e) {
+				stdout.printf("failed.\n");
+				stderr.printf ("%s\n", e.message);
+			}
 		}
 
 		public void on_change(File file, File? other_file, FileMonitorEvent event_type) {

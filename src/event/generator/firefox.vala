@@ -56,22 +56,28 @@ namespace Kraken {
 
 		private string extract_current_url() {
 			string content;
-			FileUtils.get_contents(session_file_path, out content);
 
-			var parser = new Json.Parser ();
-			parser.load_from_data (content, -1);
+			try {
+				FileUtils.get_contents(session_file_path, out content);
 
-			var root_object = parser.get_root().get_object ();
+				var parser = new Json.Parser ();
+				parser.load_from_data (content, -1);
 
-			int active_window_index = (int) root_object.get_int_member("selectedWindow") - 1;
-			var active_window = root_object.get_array_member("windows").get_elements().nth_data(active_window_index).get_object();
+				var root_object = parser.get_root().get_object ();
 
-			int active_tab_index = (int) active_window.get_int_member("selected") - 1;
-			var active_tab = active_window.get_array_member("tabs").get_elements().nth_data(active_tab_index).get_object();
+				int active_window_index = (int) root_object.get_int_member("selectedWindow") - 1;
+				var active_window = root_object.get_array_member("windows").get_elements().nth_data(active_window_index).get_object();
 
-			int active_entry_index = (int) active_tab.get_int_member("index") - 1;
-			var active_entry = active_tab.get_array_member("entries").get_elements().nth_data(active_entry_index).get_object();
-			return active_entry.get_string_member("url");
+				int active_tab_index = (int) active_window.get_int_member("selected") - 1;
+				var active_tab = active_window.get_array_member("tabs").get_elements().nth_data(active_tab_index).get_object();
+
+				int active_entry_index = (int) active_tab.get_int_member("index") - 1;
+				var active_entry = active_tab.get_array_member("entries").get_elements().nth_data(active_entry_index).get_object();
+				return active_entry.get_string_member("url");
+			} catch (Error err) {
+				stderr.printf (err.message);
+			}
+			return "";
 		}
 	}
 
