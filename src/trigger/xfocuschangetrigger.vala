@@ -53,7 +53,7 @@ namespace Kraken {
 
 				int response_type = 0;
 				while ((response_type = connection.wait_for_event().response_type) != Xcb.FOCUS_OUT) {
-					stdout.printf("X event type %d\n", response_type);
+					//stdout.printf("X event type %d\n", response_type);
 				}
 				//stdout.printf("FOCUS CHANGE EVENT\n");
 
@@ -78,8 +78,11 @@ namespace Kraken {
 		                                                Xcb.Atom.STRING,
 		                                                0, 100);
 		    Xcb.GetPropertyReply window_name = connection.get_property_reply(propertyCookie, out error);
-
-		    return window_name.value_as_string();
+			if (window_name != null) {
+		    	return window_name.value_as_string();
+		    } else {
+		    	return null;
+		    }
 		}
 
 		// get the class (~process-name) of the window
@@ -91,10 +94,14 @@ namespace Kraken {
 		                                                Xcb.Atom.STRING,
 		                                                0, 100);
 		    Xcb.GetPropertyReply program_name = connection.get_property_reply(propertyCookie2, out error);
-		    return program_name.value_as_string();
+		    if (program_name != null) {
+		    	return program_name.value_as_string();
+		    } else {
+		    	return null;
+		    }
 		}
 
-		// register at the X-server for FOCUS_CHANGE events
+		// register at the X-server for FOCUS_CHANGE events of a window
 		private void register_focus_change_event(Xcb.Window w) {
 			// http://xcb.freedesktop.org/tutorial/events/
 			connection.flush();
