@@ -34,6 +34,7 @@ namespace Kraken {
 		}
 
 		public void on_change(File file, File? other_file, FileMonitorEvent event_type) {
+			stdout.printf ("%s: %s\n", event_type.to_string (), file.get_path ());
 			if (event_type == FileMonitorEvent.CHANGES_DONE_HINT) {
 				handler.on_trigger_fired(path);
 			}

@@ -18,6 +18,7 @@ namespace Kraken {
 			this.log = log;
 
 			new FirefoxGenerator(this);
+			new LibreOfficeGenerator(this);
 
 			ITrigger xtrigger = new XFocusChangeTrigger(this);
 			triggers.set("x", xtrigger);
@@ -40,6 +41,7 @@ namespace Kraken {
 		}
 
 		public void register_generator_for_file(IGenerator generator, string path) {
+			stdout.printf("register generator for path '%s'.\n", path);
 			generators.set(path, generator);
 			if (!triggers.has_key(path)) {
 				stdout.printf("need to create new file trigger for path '%s'.\n", path);
@@ -73,6 +75,11 @@ namespace Kraken {
 							current_url = activity;
 							log.log("OPENED URL: " + activity.data);
 						}
+						break;
+					case Activity.ActivityType.FILE:
+						on_activity_finished(current_file);
+						current_file = activity;
+						log.log("OPENED FILE: " + activity.data);
 						break;
 					case Activity.ActivityType.GEOPOSITION:
 						on_activity_finished(current_position);
