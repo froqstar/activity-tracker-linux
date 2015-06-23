@@ -27,7 +27,6 @@ namespace Kraken {
 
 			try {
 				Dir dir = Dir.open(fd_path, 0);
-				File fdir = File.new_for_path(fd_path);
 				string? name = null;
 
 				while ((name = dir.read_name ()) != null) {
