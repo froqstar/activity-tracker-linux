@@ -4,6 +4,7 @@ namespace Kraken {
 
 	[DBus (name = "org.freedesktop.NetworkManager")]
 	interface NetworkManager : Object {
+		public abstract ObjectPath activating_connection {owned get;}
 		public abstract ObjectPath primary_connection {owned get;}
 		public abstract string primary_connection_type {owned get;}
 		public signal void state_changed(uint32 nm_state);
@@ -79,12 +80,12 @@ namespace Kraken {
 		private void report_active_wifi_ssid() {
 			try {
 				//only report wifi ssids
-				stdout.printf("connection path: %s , type: %s\n", manager.primary_connection, manager.primary_connection_type);
 				if (manager.primary_connection_type == "802-11-wireless") {
+					string connection_path = manager.primary_connection;
 					Connection conn = Bus.get_proxy_sync(
 							BusType.SYSTEM,
 							NM_DBUS_ADDRESS,
-				          	manager.primary_connection);
+				          	connection_path);
 				    string ssid = conn.id;
 
 				    stdout.printf("SSID = %s\n", ssid);

@@ -35,7 +35,7 @@ namespace Kraken {
 					if (FileUtils.test(abspath, FileTest.IS_SYMLINK)) {
 						fname = FileUtils.read_link(abspath);
 					}
-					stdout.printf("evaluating opened file '%s'\n", fname);
+					//stdout.printf("evaluating opened file '%s'\n", fname);
 					if ( fname.contains(Environment.get_home_dir()) && !fname.contains("/.") ) {
 						handler.on_activity_started(new Activity(fname, Activity.ActivityType.FILE));
 						return;
