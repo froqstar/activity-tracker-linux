@@ -32,6 +32,10 @@ namespace Kraken {
 			ITrigger networktrigger = new NetworkManagerTrigger(this, this);
 			triggers.set("network", networktrigger);
 			networktrigger.activate();
+
+			ITrigger zeitgeisttrigger = new ZeitgeistTrigger(this, this);
+			triggers.set("zeitgeist", zeitgeisttrigger);
+			zeitgeisttrigger.activate();
 		}
 
 		public void on_trigger_fired(string? identifier) {
