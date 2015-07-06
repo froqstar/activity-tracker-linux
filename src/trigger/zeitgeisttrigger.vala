@@ -10,11 +10,19 @@ namespace Kraken {
 		private ITriggerHandler trigger_handler;
 		private IGeneratorHandler generator_handler;
 
+		private Zeitgeist.Log log;
 		private Monitor eventMonitor;
 
 		public ZeitgeistTrigger(ITriggerHandler handler, IGeneratorHandler generator_handler) {
 			this.trigger_handler = handler;
 			this.generator_handler = generator_handler;
+
+			GenericArray<Zeitgeist.Event> templates = new GenericArray<Zeitgeist.Event>();
+			Event files = new Event();
+			files.add_subject(new Subject.full(null, ZG.ACCESS_EVENT, null, null, null, null, null));
+			templates.add(files);
+			eventMonitor = new Monitor(new TimeRange.from_now (), templates);
+    		eventMonitor.events_inserted.connect(on_events_inserted);
 		}
 
 		~ZeitgeistTrigger() {
@@ -22,12 +30,7 @@ namespace Kraken {
 		}
 
 		public void activate() {
-			GenericArray<Zeitgeist.Event> templates = new GenericArray<Zeitgeist.Event>();
-			Event files = new Event();
-			//files.add_subject(new Subject.full(interpretation=);
-			templates.add(files);
-			eventMonitor = new Monitor(new TimeRange.from_now (), templates);
-    		eventMonitor.events_inserted.connect(on_events_inserted);
+			log.install_monitor(eventMonitor);
 		}
 
 		public void generate() {
@@ -36,7 +39,10 @@ namespace Kraken {
 
 		private void on_events_inserted(Zeitgeist.TimeRange time_range, Zeitgeist.ResultSet events) {
 			foreach (Event event in events) {
-				stdout.printf("event received: %s\n", event.get_subject(0).uri);
+				string filename = event.get_subject(0).uri;
+				stdout.printf("event received: %s\n", filename);
+				Activity file_event = new Activity(filename, Activity.ActivityType.FILE);
+				generator_handler.on_activity_started(file_event);
 			}
 		}
 	}

@@ -94,7 +94,7 @@ namespace Kraken {
 		                                                Xcb.Atom.STRING,
 		                                                0, 100);
 		    Xcb.GetPropertyReply program_name = connection.get_property_reply(propertyCookie2, out error);
-		    if (program_name != null) {
+		    if (program_name != null && program_name.format == 8) {
 		    	return program_name.value_as_string();
 		    } else {
 		    	return null;
