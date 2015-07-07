@@ -2,6 +2,7 @@ using Gee;
 
 namespace Kraken {
 
+	// get PID of a process, based off its executable name. returns 0 if no PID could be found
 	public static int getPIDFromExecutable(string executableName) {
 		string stdout;
 		string stderr;
@@ -11,6 +12,12 @@ namespace Kraken {
 									out stdout,
 									out stderr,
 									out status);
-		return int.parse(stdout.split(" ")[0]);
+		string[] pids = stdout.split(" ");
+
+		if (pids.length > 0) {
+			return int.parse(stdout.split(" ")[0]);
+		} else {
+			return 0;
+		}
 	}
 }

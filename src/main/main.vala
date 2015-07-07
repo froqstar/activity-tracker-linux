@@ -49,7 +49,6 @@ namespace Kraken {
 			} else {
 				stdout.printf("no generator registered for '%s', using default generator.\n", identifier);
 				default_generator.generate(identifier, type);
-				//on_activity_started(new Activity(identifier, Activity.ActivityType.APPLICATION));
 			}
 		}
 
