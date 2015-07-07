@@ -1,2 +1,2 @@
-# activity-tracker-linux
-an activity tracker for linux
+# client_linux_kraken
+Kraken.me: Linux Desktop Tracker
