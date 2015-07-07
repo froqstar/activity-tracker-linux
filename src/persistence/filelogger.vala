@@ -1,3 +1,5 @@
+using Gee;
+
 namespace Kraken {
 
 	class FileLogger : Object, ILogger {
@@ -6,6 +8,8 @@ namespace Kraken {
 		private DataOutputStream log_stream;
 
 		private bool changes_since_last_sync = false;
+
+		private Gee.HashMap<string, Activity> activities_since_last_sync = new HashMap<string, Activity>();
 
 		public FileLogger(string file) {
 			logfile = File.new_for_path (file);
@@ -54,6 +58,7 @@ namespace Kraken {
 						break;
 				}
 				changes_since_last_sync = true;
+				activities_since_last_sync.set(activity.data, activity);
 			}
 		}
 
@@ -79,15 +84,19 @@ namespace Kraken {
 						break;
 				}
 				changes_since_last_sync = true;
+				activities_since_last_sync.set(activity.data, activity);
 			}
 		}
 
-		public bool needs_sync() {
-			return changes_since_last_sync;
-		}
-
-		public void reset_sync_need() {
-			changes_since_last_sync = false;
+		public void sync() {
+			if (changes_since_last_sync) {
+				foreach (Activity a in activities_since_last_sync.values()) {
+					if (a.end != null) { // ignore not-yet-finished events
+						log(a.start.to_string() + " - " + a.end.to_string() + " : " + a.data);
+						activities_since_last_sync.unset(a.data);
+					}
+				}
+			}
 		}
 	}
 

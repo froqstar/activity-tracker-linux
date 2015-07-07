@@ -138,9 +138,9 @@ namespace Kraken {
 			}
 		}
 
-		private void sync_if_needed() {
-
-
+		public bool sync_persistence() {
+			log.sync();
+			return true;
 		}
 
 		public static int main(string[] args) {
@@ -151,7 +151,7 @@ namespace Kraken {
 			//http://stackoverflow.com/questions/12561695/efficient-daemon-in-vala
 
 			MainLoop loop = new MainLoop ();
-			Timeout.add(1000*30, sync_if_needed, GLib.Priority.LOW);
+			Timeout.add(1000*30, sync_persistence, GLib.Priority.LOW);
 			loop.run ();
 
 			return 0;
