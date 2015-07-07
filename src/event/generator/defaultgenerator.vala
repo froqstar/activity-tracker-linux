@@ -23,7 +23,6 @@ namespace Kraken {
 				fd_path = "/proc/"+pid.to_string()+"/fd";
 				handler.register_generator_for_file(this, fd_path);
 			}
-			stdout.printf("fd_path %s\n", fd_path);
 
 			handler.on_activity_started(new Activity(identifier, Activity.ActivityType.APPLICATION));
 

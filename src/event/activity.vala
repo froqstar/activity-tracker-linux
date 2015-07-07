@@ -3,8 +3,8 @@ namespace Kraken {
 
 	class Activity : Object {
 
-		private DateTime start;
-		private DateTime end;
+		public DateTime start {get; private set;}
+		public DateTime end {get; set;}
 
 		public enum ActivityType {
 			APPLICATION,

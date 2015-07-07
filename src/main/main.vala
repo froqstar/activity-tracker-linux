@@ -76,40 +76,37 @@ namespace Kraken {
 						if (current_application.data != activity.data) { // new activity
 							on_activity_finished(current_application);
 							current_application = activity;
-							log.log("OPENED APPLICATION: " + activity.data);
 						}
 						break;
 					case Activity.ActivityType.URL:
 						if (current_url.data != activity.data) {
 							on_activity_finished(current_url);
 							current_url = activity;
-							log.log("OPENED URL: " + activity.data);
 						}
 						break;
 					case Activity.ActivityType.FILE:
 						if (current_file.data != activity.data) {
 							on_activity_finished(current_file);
 							current_file = activity;
-							log.log("OPENED FILE: " + activity.data);
+
 						}
 						break;
 					case Activity.ActivityType.WIFI_NETWORK:
 						if (current_network.data != activity.data) {
 							on_activity_finished(current_network);
 							current_network = activity;
-							log.log("CONNECTED TO WIFI NETWORK: " + activity.data);
 						}
 						break;
 					case Activity.ActivityType.GEOPOSITION:
 						if (current_position.data != activity.data) {
 							on_activity_finished(current_position);
 							current_position = activity;
-							log.log("MOVED TO: " + activity.data);
 						}
 						break;
 					default:
 						break;
 				}
+				log.log_start(activity);
 			}
 		}
 
@@ -119,28 +116,25 @@ namespace Kraken {
 					case Activity.ActivityType.APPLICATION:
 						on_activity_finished(current_url);
 						on_activity_finished(current_file);
-						log.log("LEFT APPLICATION: " + activity.data);
 						current_application = null;
 						break;
 					case Activity.ActivityType.URL:
-						log.log("LEFT URL: " + activity.data);
 						current_url = null;
 						break;
 					case Activity.ActivityType.FILE:
-						log.log("CLOSED FILE: " + activity.data);
 						current_file = null;
 						break;
 					case Activity.ActivityType.WIFI_NETWORK:
-						log.log("DISCONNECTED FROM WIFI NETWORK: " + activity.data);
 						current_network = null;
 						break;
 					case Activity.ActivityType.GEOPOSITION:
-						log.log("MOVED FROM: " + activity.data);
 						current_position = null;
 						break;
 					default:
 						break;
 				}
+				activity.end = new DateTime.now_utc();
+				log.log_end(activity);
 			}
 		}
 
