@@ -57,7 +57,7 @@ namespace Kraken {
 			}
 		}
 
-		public void generate() {
+		public void generate(string? identifier, TriggerType type) {
 
 		}
 

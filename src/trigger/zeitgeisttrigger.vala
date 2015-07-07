@@ -17,12 +17,17 @@ namespace Kraken {
 			this.trigger_handler = handler;
 			this.generator_handler = generator_handler;
 
+			//log = new Zeitgeist.Log();
+			log = Zeitgeist.Log.get_default();
+
 			GenericArray<Zeitgeist.Event> templates = new GenericArray<Zeitgeist.Event>();
 			Event files = new Event();
-			files.add_subject(new Subject.full(null, ZG.ACCESS_EVENT, null, null, null, null, null));
+			files.add_subject(new Subject.full("", ZG.ACCESS_EVENT, "", "", "", "", ""));
 			templates.add(files);
-			eventMonitor = new Monitor(new TimeRange.from_now (), templates);
+			eventMonitor = new Monitor(new TimeRange.anytime(), templates);
     		eventMonitor.events_inserted.connect(on_events_inserted);
+
+    		//on_events_inserted(null, log.find_events(new TimeRange.anytime(), templates, StorageState.ANY, 10, ResultType.MOST_RECENT_SUBJECTS, null));
 		}
 
 		~ZeitgeistTrigger() {
@@ -31,13 +36,16 @@ namespace Kraken {
 
 		public void activate() {
 			log.install_monitor(eventMonitor);
+			stdout.printf("is connected? %s\n", log.is_connected? "yes":"no");
+
 		}
 
-		public void generate() {
+		public void generate(string? identifier, TriggerType type) {
 
 		}
 
 		private void on_events_inserted(Zeitgeist.TimeRange time_range, Zeitgeist.ResultSet events) {
+			stdout.printf("event received\n");
 			foreach (Event event in events) {
 				string filename = event.get_subject(0).uri;
 				stdout.printf("event received: %s\n", filename);

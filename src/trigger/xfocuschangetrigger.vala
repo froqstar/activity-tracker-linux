@@ -47,7 +47,7 @@ namespace Kraken {
 				string window_class = get_window_class(focused_window);
 				//stdout.printf("window title: %s\nwindow class: %s\n\n\n", window_title, window_class);
 
-				handler.on_trigger_fired(window_class);
+				handler.on_trigger_fired(window_class, TriggerType.FOCUS);
 
 				register_focus_change_event(focused_window);
 

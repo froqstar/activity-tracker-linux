@@ -1,29 +1,29 @@
 namespace Kraken {
 
-	class LibreOfficeGenerator : Object, IGenerator {
+	/**
+	 * Default generator used when no other generator is registered for the identifier
+	 */
+	class DefaultGenerator : Object, IGenerator {
 
 		private IGeneratorHandler handler;
 
-		private static const string ACTIVITY_NAME = "libreoffice";
-
-		private int pid = 0;
-		private string fd_path = "";
-
-		public LibreOfficeGenerator(IGeneratorHandler handler) {
+		public DefaultGenerator(IGeneratorHandler handler) {
 			this.handler = handler;
-			handler.register_generator_for_window_class(this, "libreoffice");
-			handler.register_generator_for_window_class(this, "soffice");
-			//handler.register_generator_for_file(this, session_file_path);
 		}
 
 		public void generate(string? identifier, TriggerType type) {
-			if (pid == 0) {
-				pid = getPIDFromExecutable("soffice.bin");
+			if (identifier == null) return;
+
+			string fd_path = "";
+			if (type == TriggerType.FILE) {
+				fd_path = identifier;
+			} else {
+				int pid = getPIDFromExecutable(identifier);
 				fd_path = "/proc/"+pid.to_string()+"/fd";
 				handler.register_generator_for_file(this, fd_path);
 			}
-			handler.on_activity_started(new Activity(ACTIVITY_NAME, Activity.ActivityType.APPLICATION));
-			//handler.on_activity_started(new Activity(extract_current_url(), Activity.ActivityType.URL));
+
+			handler.on_activity_started(new Activity(identifier, Activity.ActivityType.APPLICATION));
 
 			try {
 				Dir dir = Dir.open(fd_path, 0);

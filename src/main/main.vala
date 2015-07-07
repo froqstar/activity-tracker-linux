@@ -6,6 +6,7 @@ namespace Kraken {
 
 		private HashMap<string, ITrigger> triggers = new HashMap<string, ITrigger>();
 		private HashMap<string, IGenerator> generators = new HashMap<string, IGenerator>();
+		private IGenerator default_generator;
 
 		private Activity current_application;
 		private Activity current_url;
@@ -17,6 +18,8 @@ namespace Kraken {
 
 		public KrakenDaemon(ILogger log) {
 			this.log = log;
+
+			default_generator = new DefaultGenerator(this);
 
 			new FirefoxGenerator(this);
 			new LibreOfficeGenerator(this);
@@ -38,14 +41,15 @@ namespace Kraken {
 			zeitgeisttrigger.activate();
 		}
 
-		public void on_trigger_fired(string? identifier) {
+		public void on_trigger_fired(string? identifier, TriggerType type) {
 			if (identifier == null) return;
 			stdout.printf("\ntrigger '%s' fired.\n", identifier);
 			if (generators.has_key(identifier)) {
-				generators.get(identifier).generate();
+				generators.get(identifier).generate(identifier, type);
 			} else {
-				stdout.printf("no generator registered for '%s', creating default activity.\n", identifier);
-				on_activity_started(new Activity(identifier, Activity.ActivityType.APPLICATION));
+				stdout.printf("no generator registered for '%s', using default generator.\n", identifier);
+				default_generator.generate(identifier, type);
+				//on_activity_started(new Activity(identifier, Activity.ActivityType.APPLICATION));
 			}
 		}
 
