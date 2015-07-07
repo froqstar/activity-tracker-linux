@@ -8,11 +8,11 @@ namespace Kraken {
 		private HashMap<string, IGenerator> generators = new HashMap<string, IGenerator>();
 		private IGenerator default_generator;
 
-		private Activity current_application;
-		private Activity current_url;
-		private Activity current_file;
-		private Activity current_network;
-		private Activity current_position;
+		private KrakenEvent current_application;
+		private KrakenEvent current_url;
+		private KrakenEvent current_file;
+		private KrakenEvent current_network;
+		private KrakenEvent current_position;
 
 		private ILogger log;
 
@@ -69,35 +69,35 @@ namespace Kraken {
 			generators.set(window_class, generator);
 		}
 
-		public void on_activity_started(Activity activity) {
+		public void on_activity_started(KrakenEvent activity) {
 			if (activity != null) {
 				switch (activity.activity_type) {
-					case Activity.ActivityType.APPLICATION:
+					case KrakenEvent.KrakenEventType.APPLICATION:
 						if (current_application.data != activity.data) { // new activity
 							on_activity_finished(current_application);
 							current_application = activity;
 						}
 						break;
-					case Activity.ActivityType.URL:
+					case KrakenEvent.KrakenEventType.URL:
 						if (current_url.data != activity.data) {
 							on_activity_finished(current_url);
 							current_url = activity;
 						}
 						break;
-					case Activity.ActivityType.FILE:
+					case KrakenEvent.KrakenEventType.FILE:
 						if (current_file.data != activity.data) {
 							on_activity_finished(current_file);
 							current_file = activity;
 
 						}
 						break;
-					case Activity.ActivityType.WIFI_NETWORK:
+					case KrakenEvent.KrakenEventType.WIFI_NETWORK:
 						if (current_network.data != activity.data) {
 							on_activity_finished(current_network);
 							current_network = activity;
 						}
 						break;
-					case Activity.ActivityType.GEOPOSITION:
+					case KrakenEvent.KrakenEventType.GEOPOSITION:
 						if (current_position.data != activity.data) {
 							on_activity_finished(current_position);
 							current_position = activity;
@@ -110,24 +110,24 @@ namespace Kraken {
 			}
 		}
 
-		public void on_activity_finished(Activity? activity) {
+		public void on_activity_finished(KrakenEvent? activity) {
 			if (activity != null) {
 				switch (activity.activity_type) {
-					case Activity.ActivityType.APPLICATION:
+					case KrakenEvent.KrakenEventType.APPLICATION:
 						on_activity_finished(current_url);
 						on_activity_finished(current_file);
 						current_application = null;
 						break;
-					case Activity.ActivityType.URL:
+					case KrakenEvent.KrakenEventType.URL:
 						current_url = null;
 						break;
-					case Activity.ActivityType.FILE:
+					case KrakenEvent.KrakenEventType.FILE:
 						current_file = null;
 						break;
-					case Activity.ActivityType.WIFI_NETWORK:
+					case KrakenEvent.KrakenEventType.WIFI_NETWORK:
 						current_network = null;
 						break;
-					case Activity.ActivityType.GEOPOSITION:
+					case KrakenEvent.KrakenEventType.GEOPOSITION:
 						current_position = null;
 						break;
 					default:

@@ -1,12 +1,12 @@
 
 namespace Kraken {
 
-	class Activity : Object {
+	class KrakenEvent : Object {
 
 		public DateTime start {get; private set;}
 		public DateTime end {get; set;}
 
-		public enum ActivityType {
+		public enum KrakenEventType {
 			APPLICATION,
 			FILE,
 			URL,
@@ -14,10 +14,10 @@ namespace Kraken {
 			GEOPOSITION
 		}
 
-		public ActivityType activity_type {get; private set;}
+		public KrakenEventType activity_type {get; private set;}
 		public string data {get; private set;}
 
-		public Activity(string data, ActivityType type) {
+		public KrakenEvent(string data, KrakenEventType type) {
 			this.data = data;
 			activity_type = type;
 

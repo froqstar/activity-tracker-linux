@@ -49,7 +49,7 @@ namespace Kraken {
 			foreach (Event event in events) {
 				string filename = event.get_subject(0).uri;
 				stdout.printf("event received: %s\n", filename);
-				Activity file_event = new Activity(filename, Activity.ActivityType.FILE);
+				KrakenEvent file_event = new KrakenEvent(filename, KrakenEvent.KrakenEventType.FILE);
 				generator_handler.on_activity_started(file_event);
 			}
 		}

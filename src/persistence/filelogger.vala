@@ -9,7 +9,7 @@ namespace Kraken {
 
 		private bool changes_since_last_sync = false;
 
-		private Gee.HashMap<string, Activity> activities_since_last_sync = new HashMap<string, Activity>();
+		private Gee.HashMap<string, KrakenEvent> activities_since_last_sync = new HashMap<string, KrakenEvent>();
 
 		public FileLogger(string file) {
 			logfile = File.new_for_path (file);
@@ -36,22 +36,22 @@ namespace Kraken {
 			}
 		}
 
-		public void log_start(Activity activity) {
+		public void log_start(KrakenEvent activity) {
 			if (activity != null) {
 				switch (activity.activity_type) {
-					case Activity.ActivityType.APPLICATION:
+					case KrakenEvent.KrakenEventType.APPLICATION:
 						log(activity.start.to_string() + " : OPENED APPLICATION: " + activity.data);
 						break;
-					case Activity.ActivityType.URL:
+					case KrakenEvent.KrakenEventType.URL:
 						log(activity.start.to_string() + " : OPENED URL: " + activity.data);
 						break;
-					case Activity.ActivityType.FILE:
+					case KrakenEvent.KrakenEventType.FILE:
 						log(activity.start.to_string() + " : OPENED FILE: " + activity.data);
 						break;
-					case Activity.ActivityType.WIFI_NETWORK:
+					case KrakenEvent.KrakenEventType.WIFI_NETWORK:
 						log(activity.start.to_string() + " : CONNECTED TO WIFI NETWORK: " + activity.data);
 						break;
-					case Activity.ActivityType.GEOPOSITION:
+					case KrakenEvent.KrakenEventType.GEOPOSITION:
 						log(activity.start.to_string() + " : MOVED TO: " + activity.data);
 						break;
 					default:
@@ -62,22 +62,22 @@ namespace Kraken {
 			}
 		}
 
-		public void log_end(Activity activity) {
+		public void log_end(KrakenEvent activity) {
 			if (activity != null) {
 				switch (activity.activity_type) {
-					case Activity.ActivityType.APPLICATION:
+					case KrakenEvent.KrakenEventType.APPLICATION:
 						log(activity.end.to_string() + " : LEFT APPLICATION: " + activity.data);
 						break;
-					case Activity.ActivityType.URL:
+					case KrakenEvent.KrakenEventType.URL:
 						log(activity.end.to_string() + " : LEFT URL: " + activity.data);
 						break;
-					case Activity.ActivityType.FILE:
+					case KrakenEvent.KrakenEventType.FILE:
 						log(activity.end.to_string() + " : CLOSED FILE: " + activity.data);
 						break;
-					case Activity.ActivityType.WIFI_NETWORK:
+					case KrakenEvent.KrakenEventType.WIFI_NETWORK:
 						log(activity.end.to_string() + " : DISCONNECTED FROM WIFI NETWORK: " + activity.data);
 						break;
-					case Activity.ActivityType.GEOPOSITION:
+					case KrakenEvent.KrakenEventType.GEOPOSITION:
 						log(activity.end.to_string() + " : MOVED FROM: " + activity.data);
 						break;
 					default:
@@ -90,7 +90,7 @@ namespace Kraken {
 
 		public void sync() {
 			if (changes_since_last_sync) {
-				foreach (Activity a in activities_since_last_sync.values()) {
+				foreach (KrakenEvent a in activities_since_last_sync.values()) {
 					if (a.end != null) { // ignore not-yet-finished events
 						log(a.start.to_string() + " - " + a.end.to_string() + " : " + a.data);
 						activities_since_last_sync.unset(a.data);

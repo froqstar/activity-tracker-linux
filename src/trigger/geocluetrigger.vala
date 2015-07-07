@@ -97,7 +97,7 @@ namespace Kraken {
 
 		      	stdout.printf("new location: %f|%f\n", location.latitude, location.longitude);
 
-				Activity activity = new Activity("%f|%f".printf(location.latitude, location.longitude), Activity.ActivityType.GEOPOSITION);
+				KrakenEvent activity = new KrakenEvent("%f|%f".printf(location.latitude, location.longitude), KrakenEvent.KrakenEventType.GEOPOSITION);
 		      	generator_handler.on_activity_started(activity);
 			} catch (IOError e) {
 				stderr.printf ("%s\n", e.message);

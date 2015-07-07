@@ -22,8 +22,7 @@ namespace Kraken {
 				fd_path = "/proc/"+pid.to_string()+"/fd";
 				handler.register_generator_for_file(this, fd_path);
 			}
-			handler.on_activity_started(new Activity(ACTIVITY_NAME, Activity.ActivityType.APPLICATION));
-			//handler.on_activity_started(new Activity(extract_current_url(), Activity.ActivityType.URL));
+			handler.on_activity_started(new KrakenEvent(ACTIVITY_NAME, KrakenEvent.KrakenEventType.APPLICATION));
 
 			try {
 				Dir dir = Dir.open(fd_path, 0);
@@ -37,7 +36,7 @@ namespace Kraken {
 					}
 					//stdout.printf("evaluating opened file '%s'\n", fname);
 					if ( fname.contains(Environment.get_home_dir()) && !fname.contains("/.") ) {
-						handler.on_activity_started(new Activity(fname, Activity.ActivityType.FILE));
+						handler.on_activity_started(new KrakenEvent(fname, KrakenEvent.KrakenEventType.FILE));
 						return;
 					}
 				}

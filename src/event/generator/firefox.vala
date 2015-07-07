@@ -17,8 +17,8 @@ namespace Kraken {
 		public void generate(string? identifier, TriggerType type) {
 			session_file_path = get_session_file_path();
 			handler.register_generator_for_file(this, session_file_path);
-			handler.on_activity_started(new Activity("firefox", Activity.ActivityType.APPLICATION));
-			handler.on_activity_started(new Activity(extract_current_url(), Activity.ActivityType.URL));
+			handler.on_activity_started(new KrakenEvent("firefox", KrakenEvent.KrakenEventType.APPLICATION));
+			handler.on_activity_started(new KrakenEvent(extract_current_url(), KrakenEvent.KrakenEventType.URL));
 		}
 
 		private string get_session_file_path() {

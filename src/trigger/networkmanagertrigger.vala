@@ -32,7 +32,7 @@ namespace Kraken {
 
 		private NetworkManager manager;
 
-		private Activity active_network = null;
+		private KrakenEvent active_network = null;
 
 		public NetworkManagerTrigger(ITriggerHandler handler, IGeneratorHandler generator_handler) {
 			this.trigger_handler = handler;
@@ -89,7 +89,7 @@ namespace Kraken {
 				    string ssid = conn.id;
 
 				    stdout.printf("SSID = %s\n", ssid);
-			    	active_network = new Activity(ssid, Activity.ActivityType.WIFI_NETWORK);
+			    	active_network = new KrakenEvent(ssid, KrakenEvent.KrakenEventType.WIFI_NETWORK);
       				generator_handler.on_activity_started(active_network);
       				stdout.printf("reported\n");
 		        } else {
