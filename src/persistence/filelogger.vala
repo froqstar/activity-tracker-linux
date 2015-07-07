@@ -5,6 +5,8 @@ namespace Kraken {
 		private File logfile;
 		private DataOutputStream log_stream;
 
+		private bool changes_since_last_sync = false;
+
 		public FileLogger(string file) {
 			logfile = File.new_for_path (file);
 			FileOutputStream file_stream;
@@ -51,6 +53,7 @@ namespace Kraken {
 					default:
 						break;
 				}
+				changes_since_last_sync = true;
 			}
 		}
 
@@ -75,7 +78,16 @@ namespace Kraken {
 					default:
 						break;
 				}
+				changes_since_last_sync = true;
 			}
+		}
+
+		public bool needs_sync() {
+			return changes_since_last_sync;
+		}
+
+		public void reset_sync_need() {
+			changes_since_last_sync = false;
 		}
 	}
 
